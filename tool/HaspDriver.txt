@@ -1,0 +1,114 @@
+List of HASPDINST.EXE (HASP HL Installer) Versions since 5.10 (July 2004)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The following list includes improvements, bug fixes, and other relevant
+information. It is arranged in descending chronological order.
+
+Version 5.12 (January 2005)
+======================
+
+New features
+------------
+Drivers have been signed for Windows 2000.
+
+Problems Solved
+----------------------
+Case TD #268
+
+After several launches, rotected data files set to "Read-only" failed to open.
+
+Case TD #1557
+After installing Norton Antivirus 2005, wrapped applications using DataHasp crash.
+
+
+Version 5.11 (Sept 2004)
+========================
+
+New features
+------------
+
+The drivers included support the HASP API version 8.0 onwards and 
+all Hardlock API versions. In order to run HASP Applications with API 
+versions before 8.0,  you must also install  the corresponding HASP driver for each 
+API version.
+
+Problems Solved
+---------------
+Case TD #303
+Double generation of log files during installation.
+
+Case TD #405
+Wrong copyright string.
+
+Case TD #503
+Older device driver installations overwrote the newly installed HASP HL 
+drivers. 
+
+Case TD #524
+Applications protected with overlay support crashed. 
+
+
+Case TD #710
+Obsolete dialog displayed during installation.
+
+Case TD #742
+"Aladdin Knowledge Systems Key 00" instead of "Aladdin Knowledge Systems 
+Key" in Device Manager.
+
+Case TD #826
+Errors lacked error strings.
+
+Case TD #895
+User not prompted to insert key during installation.
+
+Case TD #993
+Win9X consecutive (legacy) logins to parallel keys failed.
+
+Version 5.10 (July 2004)
+
+Known Issues
+-------------------
+The driver installer, haspdinst.exe, does not install drivers on Windows NT 4.0 
+and Windows 95 platforms.
+
+HASP HL drivers are not available for DOS applications. To run protected 
+DOS applications you must install the corresponding HASP driver. 
+
+Under Windows XP, a HASP HL key must have been previously connected to 
+the computer to enable haspdinst.exe to display the correct HASP HL drivers 
+version.
+
+Under Windows 9x/ME, HL-Server won't detect Hardlock Server USB keys. You 
+should install the required Hardlock drivers.
+
+When running the HASP HL driver installer in a Terminal Server environment, 
+the aksdrvsetup.log  file is generated in the current user’s directory. 
+
+Older device driver installations sometimes overwrite the HASP HL drivers. You 
+should run the haspdinst installer (haspdinst.exe -i) to fix the HASP HL 
+installation. This scenario is only relevant for Windows XP/2003 platforms. 
+
+The current version of the drivers does not support applications wrapped with 
+HASP HL Envelope with overlay encryption enabled. Should you attempt to 
+start these applications, your system will crash and display a blue screen. 
+
+If you use USB hubs which do not comply with all specifications of the USB 
+standard, your Aladdin USB keys might occasionally lose their enumeration.  If 
+you plan to use USB keys on Microsoft platforms, refer to the Hardware 
+Compatibility Lists at http://www.microsoft.com/whdc/hcl/default.mspx
+
+Some USB controllers cause Microsoft platforms to hang or display a blue 
+screen. This problem is not related to Aladdin drivers. 
+
+There are known limitations with various PCMCIA card reader brands used 
+on AMD64 platforms. Check for chipset compatibility in the hardware 
+specifications provided by the manufacturer the of card reader. 
+
+Due to a problem with the hardware of the PCI crypto programmer card, in 
+some cases a Hardlock key will be recognized on the CPC address, however, 
+encryption and read/write memory functions will fail. To avoid this problem,
+you should explicitly set the address where to search for the Hardlock key.
+
+
+
+
+
