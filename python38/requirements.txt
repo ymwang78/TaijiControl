@@ -120,7 +120,7 @@ six==1.15.0
 sklearn==0.0
 sortedcontainers==2.4.0
 soupsieve==2.0.1
-statsmodels
+statsmodels==0.13.2
 tenacity==8.2.3
 terminado==0.8.3
 testpath==0.4.4
