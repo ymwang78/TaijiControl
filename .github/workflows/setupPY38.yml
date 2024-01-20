@@ -26,6 +26,14 @@ jobs:
     - name: update pip
       run: python -m pip install --upgrade pip
 
+    - name: Install .whlz files from bin directory
+      run: |
+          $files = Get-ChildItem -Path ".\python38\bin\*.whl" -File
+          ForEach ($file in $files) {
+              pip install $file
+          }
+      shell: powershell
+
     - name: Install requirements
       run: pip install -r .\python38\requirements.txt
 
