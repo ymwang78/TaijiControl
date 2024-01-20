@@ -45,10 +45,6 @@ jobs:
           }
       shell: powershell
 
-    - name: Print Environment Variables
-      run: |
-            set
-
     - name: Compress with 7zip
       run: |
             7z a ./python38_win32.zip ${{ env.pythonLocation }}
