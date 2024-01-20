@@ -1,0 +1,65 @@
+name: Setup Python38_win32
+run-name: ${{ github.actor }} trys to get a python zip
+on: 
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package-python:
+    runs-on: windows-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Setup Python 3.8_win32
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+        architecture: x86
+
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
+
+    - name: update pip
+      run: python -m pip install --upgrade pip
+
+    - name: Install requirements
+      run: pip install -r .\python38\requirements.txt
+
+    - name: Install .tar.gz files from bin directory
+      run: |
+          $files = Get-ChildItem -Path ".\python38\bin\*.tar.gz" -File
+          ForEach ($file in $files) {
+              pip install $file
+          }
+      shell: powershell
+
+    - name: Print Environment Variables
+      run: |
+            set
+
+    - name: Compress with 7zip
+      run: |
+            7z a ./python38_win32.zip ${{ env.pythonLocation }}
+
+
+    - name: Generate release tag
+      id: gen_tag
+      run: |
+            $utcTime = (Get-Date).ToUniversalTime()
+            $beijingTime = $utcTime.AddHours(8)
+            $date = $beijingTime.ToString("yyyyMMdd_HHmm")
+            echo "RELEASE_TAG=py38win32_${date}" >> $env:GITHUB_OUTPUT
+      shell: powershell
+
+    - name: Release Executable
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: release_${{steps.gen_tag.outputs.RELEASE_TAG}}
+        files: |
+          ./python38_win32.zip 
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

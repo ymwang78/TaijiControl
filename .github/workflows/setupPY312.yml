@@ -14,7 +14,7 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
 
-    - name: Set up Python 3.12
+    - name: Setup Python 3.12
       uses: actions/setup-python@v2
       with:
         python-version: '3.12'
@@ -36,6 +36,9 @@ jobs:
           }
       shell: powershell
 
+    - name: Print Environment Variables
+      run: |
+            set
 
     - name: Compress with 7zip
       run: |
