@@ -12,10 +12,10 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup Python 3.12
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
 
@@ -36,11 +36,14 @@ jobs:
           }
       shell: powershell
 
+    - name: Delete python setup
+      run: |
+          rm -f ${{ env.pythonLocation }}/python-*-amd64.exe
+
     - name: Compress with 7zip
       run: |
             7z a ./python312.zip ${{ env.pythonLocation }}
-
-
+            
     - name: Generate release tag
       id: gen_tag
       run: |
