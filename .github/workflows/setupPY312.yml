@@ -38,9 +38,9 @@ jobs:
 
     - name: Compress with 7zip
       run: |
-          mkdir /p dist
+          mkdir -p dist
           mv ${{env.pythonLocation}}  ./dist/python312
-          rm -f ./dist/python312/python-*-amd64.exe
+          rm ./dist/python312/python-*-amd64.exe
           7z a ./python312.zip ./dist/python312
           mv dist/python312 ${{env.pythonLocation}}
           
