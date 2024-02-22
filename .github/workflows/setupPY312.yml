@@ -42,7 +42,6 @@ jobs:
           xcopy ${{env.pythonLocation}}  ./dist/python312 /E /H /C /I
           rm ./dist/python312/python-*-amd64.exe
           7z a ./python312.zip ./dist/python312
-      shell: cmd
           
     - name: Generate release tag
       id: gen_tag
