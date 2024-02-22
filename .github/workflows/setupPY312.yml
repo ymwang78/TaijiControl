@@ -39,8 +39,8 @@ jobs:
     - name: Compress with 7zip
       run: |
           mkdir ./dist
-          xcopy ${{env.pythonLocation}}  ./dist/python312 /E /H /C /I
-          rm ./dist/python312/python-*-amd64.exe
+          Copy-Item -Path ${{env.pythonLocation}} -Destination ./dist/python312 -Recurse -Force
+          rm -Force ./dist/python312/python-*-amd64.exe
           7z a ./python312.zip ./dist/python312
           
     - name: Generate release tag
