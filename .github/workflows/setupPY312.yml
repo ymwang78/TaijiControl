@@ -38,11 +38,10 @@ jobs:
 
     - name: Compress with 7zip
       run: |
-          mkdir -p dist
-          mv ${{env.pythonLocation}}  ./dist/python312
+          mkdir ./dist
+          cp ${{env.pythonLocation}}  ./dist/python312
           rm ./dist/python312/python-*-amd64.exe
           7z a ./python312.zip ./dist/python312
-          mv dist/python312 ${{env.pythonLocation}}
           
     - name: Generate release tag
       id: gen_tag
