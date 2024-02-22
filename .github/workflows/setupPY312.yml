@@ -36,14 +36,14 @@ jobs:
           }
       shell: powershell
 
-    - name: Delete python setup
-      run: |
-          rm -f ${{ env.pythonLocation }}/python-*-amd64.exe
-
     - name: Compress with 7zip
       run: |
-            7z a ./python312.zip ${{ env.pythonLocation }}
-            
+          mkdir /p dist
+          mv ${{env.pythonLocation}}  ./dist/python312
+          rm -f ./dist/python312/python-*-amd64.exe
+          7z a ./python312.zip ./dist/python312
+          mv dist/python312 ${{env.pythonLocation}}
+          
     - name: Generate release tag
       id: gen_tag
       run: |
