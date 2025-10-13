@@ -1,0 +1,12 @@
+services:
+  opcserver:
+    image: kkzhang3/taiji-pysim:latest
+    container_name: taiji-opcsim-server
+    working_dir: /opcserver
+    command: ["./taiji-opcsim-server", "-s"]
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+# docker-compose -f docker-compose.opcserver.yml up -d

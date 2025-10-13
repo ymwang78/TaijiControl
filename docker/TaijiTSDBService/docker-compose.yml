@@ -1,0 +1,17 @@
+services:
+  tsdb:
+    image: timescale/timescaledb:2.21.3-pg17
+    container_name: taiji-tsdb-service
+    network_mode: host
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwer1234
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+volumes:
+  pgdata:

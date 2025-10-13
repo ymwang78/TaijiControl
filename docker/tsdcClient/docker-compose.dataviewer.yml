@@ -1,0 +1,15 @@
+services:
+  dataviewer:
+    image: kkzhang3/taiji-tsdbclient:v1.0.0
+    command: python DataViewer.py
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /root/.hasplm:/root/.hasplm
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./config:/app/config
+
+# docker-compose -f docker-compose.dataviewer.yml up -d
