@@ -29,7 +29,7 @@ jobs:
         cd "WPy64-312101/python"
         .\python.exe -m pip download -d "..\..\wheelhouse" taiji_hasp pymodbus tsdbadmin taiji-dataviewer taiji-datacollector
         # 添加其他需要的包
-        .\python.exe -m pip download -d "..\..\wheelhouse" taiji-pysimulator tj010 tjdcs tsdbpy OPCGatePy
+        .\python.exe -m pip download -d "..\..\wheelhouse" taiji-pysimulator tj010 tjdcs tsdbpy OPCGatePy watchdog
       
     - name: Generate requirements.txt from existing wheels
       run: |
@@ -126,3 +126,4 @@ jobs:
           *.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
