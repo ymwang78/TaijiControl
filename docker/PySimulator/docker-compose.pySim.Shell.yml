@@ -1,6 +1,6 @@
 services:
   pysim-shell:
-    image: kkzhang3/taiji-pysim:latest
+    image: kkzhang3/taiji-pysim:v1.0.0
     container_name: pysim-shell
     working_dir: /PySimulator
     network_mode: host

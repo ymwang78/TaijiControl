@@ -1,6 +1,6 @@
 services:
   opcserver:
-    image: kkzhang3/taiji-pysim:latest
+    image: kkzhang3/taiji-pysim:v1.0.0
     container_name: taiji-opcsim-server
     working_dir: /opcserver
     command: ["./taiji-opcsim-server", "-s"]

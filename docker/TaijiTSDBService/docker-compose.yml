@@ -1,6 +1,6 @@
 services:
   tsdb:
-    image: timescale/timescaledb:2.21.3-pg17
+    image: timescale/timescaledb:2.21.4-pg17
     container_name: taiji-tsdb-service
     network_mode: host
     environment:

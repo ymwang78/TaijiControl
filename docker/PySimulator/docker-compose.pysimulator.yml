@@ -1,6 +1,6 @@
 services:
   pysimulator:
-    image: kkzhang3/taiji-pysim:latest
+    image: kkzhang3/taiji-pysim:v1.0.0
     working_dir: /PySimulator
     command: ["python", "main.py"]
     network_mode: host
