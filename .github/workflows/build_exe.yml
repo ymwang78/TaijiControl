@@ -1,0 +1,129 @@
+name: Build Windows Installer
+
+on:
+  push:
+    tags: ['v*']  # 在推送版本标签时触发
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build-installer:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Download and extract WinPython
+      run: |
+        $url = "https://github.com/winpython/winpython/releases/download/16.6.20250620final/Winpython64-3.12.10.1dot.zip"
+        $zipFile = "Winpython64-3.12.10.1dot.zip"
+        Invoke-WebRequest -Uri $url -OutFile $zipFile
+        Expand-Archive -Path $zipFile -DestinationPath . -Force
+      
+    - name: Create wheelhouse directory
+      run: New-Item -ItemType Directory -Path "wheelhouse" -Force
+
+
+    - name: Download additional wheels
+      run: |
+        cd "WPy64-312101/python"
+        .\python.exe -m pip download -d "..\..\wheelhouse" taiji_hasp pymodbus tsdbadmin taiji-dataviewer taiji-datacollector
+        # 添加其他需要的包
+        .\python.exe -m pip download -d "..\..\wheelhouse" taiji-pysimulator tj010 tjdcs tsdbpy OPCGatePy watchdog
+      
+    - name: Generate requirements.txt from existing wheels
+      run: |
+        Write-Host "Listing all files in wheelhouse directory:"
+        Get-ChildItem "wheelhouse" -Recurse | ForEach-Object { Write-Host "  - $($_.Name)" }
+        
+        if (Test-Path "wheelhouse\*.*") {
+          Write-Host "Found wheel files, generating requirements.txt..."
+          $wheelFiles = Get-ChildItem "wheelhouse\*.*" | ForEach-Object { $_.Name }
+          $wheelFiles | Out-File -FilePath "wheelhouse\requirements.txt" -Encoding UTF8
+          Write-Host "Generated requirements.txt with content:"
+          Get-Content "wheelhouse\requirements.txt" | ForEach-Object { Write-Host "  - $_" }
+        } else {
+          Write-Host "No wheel files found in wheelhouse directory"
+          "" | Out-File -FilePath "wheelhouse\requirements.txt" -Encoding UTF8
+        }
+      
+    - name: Install 7-Zip
+      run: |
+        choco install 7zip -y
+      
+    - name: Create 7z archive
+      run: |
+        # 进入目录并压缩所有内容
+        Push-Location "WPy64-312101"
+        & "C:\Program Files\7-Zip\7z.exe" a -t7z "..\WPy64-312101.7z" "*" -mx=9
+        Pop-Location
+        
+        Write-Host "Archive created: WPy64-312101.7z"
+      
+    - name: Install NSIS
+      run: |
+        choco install nsis -y
+
+    - name: Install NSIS Plugins
+      run: |
+        # 创建NSIS插件目录
+        $pluginDir = "C:\Program Files (x86)\NSIS\Plugins\x86-unicode"
+        New-Item -ItemType Directory -Path $pluginDir -Force
+        
+        # 下载并安装Nsis7z插件
+        $nsis7zUrl = "https://nsis.sourceforge.io/mediawiki/images/9/93/Nsis7z.zip"
+        $nsis7zZip = "Nsis7z.zip"
+        Write-Host "Downloading Nsis7z plugin..."
+        Invoke-WebRequest -Uri $nsis7zUrl -OutFile $nsis7zZip
+        
+        Write-Host "Extracting Nsis7z plugin..."
+        Expand-Archive -Path $nsis7zZip -DestinationPath "nsis7z_temp" -Force
+        
+        Write-Host "Copying Nsis7z plugin files..."
+        # 复制所有DLL文件到插件目录
+        Get-ChildItem -Path "nsis7z_temp" -Recurse -Filter "*.dll" | ForEach-Object {
+          Copy-Item -Path $_.FullName -Destination $pluginDir -Force
+          Write-Host "Copied: $($_.Name)"
+        }
+        
+        # 下载并安装EnVar插件
+        $envarUrl = "https://nsis.sourceforge.io/mediawiki/images/7/7f/EnVar_plugin.zip"
+        $envarZip = "EnVar_plugin.zip"
+        Write-Host "Downloading EnVar plugin..."
+        Invoke-WebRequest -Uri $envarUrl -OutFile $envarZip
+        
+        Write-Host "Extracting EnVar plugin..."
+        Expand-Archive -Path $envarZip -DestinationPath "envar_temp" -Force
+        
+        Write-Host "Copying EnVar plugin files..."
+        Get-ChildItem -Path "envar_temp" -Recurse -Filter "*.dll" | ForEach-Object {
+          Copy-Item -Path $_.FullName -Destination $pluginDir -Force
+          Write-Host "Copied: $($_.Name)"
+        }
+        
+        # 验证插件安装
+        Write-Host "Installed plugins:"
+        Get-ChildItem -Path $pluginDir -Filter "*.dll" | ForEach-Object {
+          Write-Host "  - $($_.Name)"
+        }
+        
+        # 清理临时文件
+        Remove-Item -Path "nsis7z_temp" -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "envar_temp" -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $nsis7zZip -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $envarZip -Force -ErrorAction SilentlyContinue
+      
+      
+    - name: Build installer with NSIS
+      run: |
+        & "C:\Program Files (x86)\NSIS\makensis.exe" nsis.nsi
+      
+    - name: Upload installer to release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          *.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
