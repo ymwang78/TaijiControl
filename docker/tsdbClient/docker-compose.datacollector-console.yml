@@ -1,0 +1,13 @@
+services:
+  datacollector:
+    image: kkzhang3/taiji-tsdbclient:v1.0.0
+    command: python DataCollector.py --console
+    network_mode: host
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./config:/app/config
+
+# docker-compose -f docker-compose.datacollector-console.yml up -d

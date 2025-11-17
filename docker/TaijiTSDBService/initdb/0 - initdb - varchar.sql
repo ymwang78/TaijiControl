@@ -1,5 +1,5 @@
 \connect postgres
-CREATE DATABASE tsdb_template TEMPLATE template1;
+CREATE DATABASE tsdb_template TEMPLATE template0;
 
 \connect tsdb_template
 CREATE EXTENSION IF NOT EXISTS btree_gist;
@@ -309,8 +309,6 @@ CREATE INDEX IF NOT EXISTS idx_tsdata_latest
 -- Index: tsdata_time_stamp_idx
 
 -- DROP INDEX IF EXISTS public.tsdata_time_stamp_idx;
-
-CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 SELECT create_hypertable('tsdata', 'time_stamp', chunk_time_interval => INTERVAL '4 hour');
 ALTER TABLE tsdata SET (

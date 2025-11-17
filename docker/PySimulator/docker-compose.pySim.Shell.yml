@@ -1,0 +1,21 @@
+services:
+  pysim-shell:
+    image: kkzhang3/taiji-pysim:latest
+    container_name: pysim-shell
+    working_dir: /PySimulator
+    network_mode: host
+
+    command: >
+      python -c "from tjdcs import SimulinkOPCGateTask;
+      from pySimulator import shellmodel;
+      task = SimulinkOPCGateTask(port=9997, group_tag='S1', Simulator=shellmodel.ShellModel);
+      task.run()"
+
+    environment:
+      - PYTHONUNBUFFERED=1
+
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+# docker-compose -f docker-compose.pySim.Shell.yml up -d
