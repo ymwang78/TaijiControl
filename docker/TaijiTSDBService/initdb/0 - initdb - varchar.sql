@@ -1,5 +1,5 @@
 \connect postgres
-CREATE DATABASE tsdb_template TEMPLATE template0;
+CREATE DATABASE tsdb_template TEMPLATE template1;
 
 \connect tsdb_template
 CREATE EXTENSION IF NOT EXISTS btree_gist;
@@ -100,10 +100,10 @@ CREATE TABLE IF NOT EXISTS public.sources
 (
     source_id integer NOT NULL DEFAULT nextval('sources_source_id_seq'::regclass),
     source_name text COLLATE pg_catalog."default" NOT NULL,
-    source_type text COLLATE pg_catalog."default" NOT NULL,
-    interval_msec integer NOT NULL,
+    source_type text COLLATE pg_catalog."default",
+    interval_msec integer NOT NULL DEFAULT 1000,
     status status_enum NOT NULL DEFAULT 'ACTIVE'::status_enum,
-    protocol protocol_enum NOT NULL,
+    protocol protocol_enum NOT NULL DEFAULT 'OPC-UA'::protocol_enum,
     endpoint text COLLATE pg_catalog."default",
     auth_config jsonb,
     conn_policy jsonb,
@@ -290,7 +290,7 @@ CREATE TABLE IF NOT EXISTS public.tsdata
     time_stamp timestamp with time zone NOT NULL,
     tag_id integer NOT NULL,
     value real NOT NULL,
-    value_quality smallint DEFAULT 100,
+    value_quality smallint DEFAULT NULL,
     CONSTRAINT tsdata_pkey PRIMARY KEY (tag_id, time_stamp)
 )
 
@@ -298,24 +298,15 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.tsdata
     OWNER to postgres;
--- Index: idx_tsdata_latest
 
--- DROP INDEX IF EXISTS public.idx_tsdata_latest;
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 
-CREATE INDEX IF NOT EXISTS idx_tsdata_latest
-    ON public.tsdata USING btree
-    (tag_id ASC NULLS LAST, time_stamp DESC NULLS FIRST)
-    TABLESPACE pg_default;
--- Index: tsdata_time_stamp_idx
-
--- DROP INDEX IF EXISTS public.tsdata_time_stamp_idx;
-
-SELECT create_hypertable('tsdata', 'time_stamp', chunk_time_interval => INTERVAL '4 hour');
+SELECT create_hypertable('tsdata', 'time_stamp', chunk_time_interval => INTERVAL '1 hour');
 ALTER TABLE tsdata SET (
     timescaledb.compress,
     timescaledb.compress_orderby = 'time_stamp',
     timescaledb.compress_segmentby = 'tag_id'
 );
-SELECT add_compression_policy('tsdata', INTERVAL '6 hours');
+
 -------------------------------------------------------------------------------------------------
 

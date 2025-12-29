@@ -1,6 +1,6 @@
 services:
   dataviewer:
-    image: kkzhang3/taiji-tsdbclient:v1.0.0
+    image: kkzhang3/taiji-tsdbclient:v1.1.0
     command: python DataViewer.py
     network_mode: host
     environment:
